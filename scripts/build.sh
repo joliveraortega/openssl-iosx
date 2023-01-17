@@ -34,7 +34,7 @@ if [ -d $BUILD_DIR/build ]; then
 fi
 
 if [ ! -d $BUILD_DIR/build/lib ]; then
-./Configure --prefix="$BUILD_DIR/build" --openssldir="$BUILD_DIR/build/ssl" no-shared darwin64-$HOST_ARC-cc
+./Configure --prefix="$BUILD_DIR/build" --openssldir="$BUILD_DIR/build/ssl" no-shared darwin64-$HOST_ARC-cc -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk
 make clean
 make -j$THREAD_COUNT
 make install
@@ -53,7 +53,7 @@ make clean
 fi
 
 if [ ! -d $BUILD_DIR/build/lib.iossim_host ]; then
-./Configure --prefix="$BUILD_DIR/build" --openssldir="$BUILD_DIR/build/ssl" no-shared iossimulator-xcrun
+./Configure --prefix="$BUILD_DIR/build" --openssldir="$BUILD_DIR/build/ssl" no-shared iossimulator-xcrun -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk
 make clean
 make -j$THREAD_COUNT
 
@@ -68,27 +68,27 @@ if [ -d $BUILD_DIR/build/lib.iossim ]; then
 fi
 mkdir $BUILD_DIR/build/lib.iossim
 
-if [ $HOST_ARC == "arm64" ]; then
-if [ ! -d $BUILD_DIR/build/lib.iossim_x86_64 ]; then
-./Configure --prefix="$BUILD_DIR/build" --openssldir="$BUILD_DIR/build/ssl" no-shared iossimulator-xcrun CFLAGS="-arch x86_64"
-make clean
-make -j$THREAD_COUNT
+# if [ $HOST_ARC == "arm64" ]; then
+# if [ ! -d $BUILD_DIR/build/lib.iossim_x86_64 ]; then
+# ./Configure --prefix="$BUILD_DIR/build" --openssldir="$BUILD_DIR/build/ssl" no-shared iossimulator-xcrun CFLAGS="-arch x86_64" -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk
+# make clean
+# make -j$THREAD_COUNT
 
-mkdir $BUILD_DIR/build/lib.iossim_x86_64
-cp libssl.a $BUILD_DIR/build/lib.iossim_x86_64/
-cp libcrypto.a $BUILD_DIR/build/lib.iossim_x86_64/
-make clean
-fi
+# mkdir $BUILD_DIR/build/lib.iossim_x86_64
+# cp libssl.a $BUILD_DIR/build/lib.iossim_x86_64/
+# cp libcrypto.a $BUILD_DIR/build/lib.iossim_x86_64/
+# make clean
+# fi
 
-lipo -create $BUILD_DIR/build/lib.iossim_x86_64/libssl.a $BUILD_DIR/build/lib.iossim_host/libssl.a -output $BUILD_DIR/build/lib.iossim/libssl.a
-lipo -create $BUILD_DIR/build/lib.iossim_x86_64/libcrypto.a $BUILD_DIR/build/lib.iossim_host/libcrypto.a -output $BUILD_DIR/build/lib.iossim/libcrypto.a
+# lipo -create $BUILD_DIR/build/lib.iossim_x86_64/libssl.a $BUILD_DIR/build/lib.iossim_host/libssl.a -output $BUILD_DIR/build/lib.iossim/libssl.a
+# lipo -create $BUILD_DIR/build/lib.iossim_x86_64/libcrypto.a $BUILD_DIR/build/lib.iossim_host/libcrypto.a -output $BUILD_DIR/build/lib.iossim/libcrypto.a
 
-else
+# else
 	cp $BUILD_DIR/build/lib.iossim_host/*.a $BUILD_DIR/build/lib.iossim/
-fi
+# fi
 
 if [ ! -d $BUILD_DIR/build/lib.ios ]; then
-./Configure --prefix="$BUILD_DIR/build" --openssldir="$BUILD_DIR/build/ssl" no-shared no-dso no-hw no-engine ios64-xcrun -fembed-bitcode -mios-version-min=13.4
+./Configure --prefix="$BUILD_DIR/build" --openssldir="$BUILD_DIR/build/ssl" no-shared no-dso no-hw no-engine ios64-xcrun -fembed-bitcode -mios-version-min=13.0 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk
 make clean
 make -j$THREAD_COUNT
 
